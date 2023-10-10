@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # load dotenv file
+load_dotenv()
 
 
 class Config:
