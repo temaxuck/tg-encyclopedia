@@ -1,6 +1,8 @@
 from app.services.telegram_service import TelegramService
 from app.services.bots.telegram_bot import TelegramBot
 from telegram import Bot
+from io import BytesIO
+from PIL import Image
 
 
 class OENPBot(TelegramBot):
@@ -22,10 +24,27 @@ class OENPBot(TelegramBot):
         self.channel_id = channel_id
 
     def post_message_to_channel(self, text: str) -> None:
-        """Post message to the telegram channel
+        """Post message to telegram channel
 
         Args:
             text (str): text message to post
         """
 
         TelegramService.post_message_to_channel(self, self.channel_id, text)
+
+    def post_image_to_channel(self, image_bytes: BytesIO, caption: str) -> None:
+        """
+        Post image to telegram channel
+
+        Args:
+            image_bytes (BytesIO): image represented by BytesIO object
+            text (str): text message to post
+        """
+        image = Image.open(image_bytes)
+
+        byte_arr = BytesIO()
+        image.save(byte_arr, format="PNG")
+
+        byte_arr.seek(0)
+
+        TelegramService.post_image_to_channel(self, self.channel_id, byte_arr, caption)
