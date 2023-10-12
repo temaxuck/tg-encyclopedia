@@ -1,8 +1,9 @@
+from app.services.telegram_service import TelegramService
+from app.services.bots.telegram_bot import TelegramBot
 from telegram import Bot
-import asyncio
 
 
-class OENPBot:
+class OENPBot(TelegramBot):
     """
     Online Encyclopedia of Number Pyramids Telegram Bot
 
@@ -27,4 +28,4 @@ class OENPBot:
             text (str): text message to post
         """
 
-        asyncio.run(self.bot.send_message(chat_id=self.channel_id, text=text))
+        TelegramService.post_message_to_channel(self, self.channel_id, text)
