@@ -14,6 +14,7 @@ class Config:
 
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
+    OENP_API_URL = os.getenv("OENP_API_URL")
 
     @classmethod
     def validate_config(cls):
@@ -26,3 +27,6 @@ class Config:
             raise ValueError(
                 "TELEGRAM_CHANNEL_ID is not set in the environment variables."
             )
+
+        if not cls.OENP_API_URL:
+            raise ValueError("OENP_API_URL is not set in the environment variables.")
