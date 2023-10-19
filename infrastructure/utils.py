@@ -9,7 +9,7 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
         latex_expression (str): LaTeX expression. Note, this function automatically encloses $ around
 
     Returns:
-        BytesIO: Bytes image
+        BytesIO: bytes that represent image
     """
 
     image = BytesIO()
@@ -31,3 +31,25 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
     )
 
     return image
+
+
+def get_pyramid_latex_representation(
+    sequence_number: int, gf_latex: str, ef_latex: str
+) -> str:
+    """
+    Get pyramid's latex representation by generating function's and explicit formula's latex representations
+
+    Args:
+        sequence_number (int): pyramid's sequence number
+        gf_latex (str): pyramid's generating function's latex representation
+        ef_latex (str): pyramid's explicit formula's latex representation
+
+    Returns:
+        str: pyramid's latex representation that would be passed to convert_latex_to_image to image
+    """
+
+    return (
+        r"\text{" + f"Pyramid {sequence_number}" + r"} \\ \\"
+        r"\text{Generating function} \\" + f"{gf_latex}" + r" \\ \\"
+        r"\text{Explicit formula} \\" + f"{ef_latex}"
+    )
