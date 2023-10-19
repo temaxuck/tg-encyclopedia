@@ -1,4 +1,3 @@
-import asyncio
 from app.services.bots.telegram_bot import TelegramBot
 from io import BytesIO
 from telegram.constants import ParseMode
@@ -11,7 +10,7 @@ class TelegramService:
     """
 
     @staticmethod
-    def post_message_to_channel(
+    async def post_message_to_channel(
         telegram_bot: TelegramBot,
         channel_id: str,
         text: str,
@@ -26,14 +25,12 @@ class TelegramService:
             reply_to_message_id <Optional> (int): message id to reply
         """
 
-        return asyncio.run(
-            telegram_bot.bot.send_message(
-                chat_id=channel_id, text=text, reply_to_message_id=reply_to_message_id
-            )
+        return telegram_bot.bot.send_message(
+            chat_id=channel_id, text=text, reply_to_message_id=reply_to_message_id
         )
 
     @staticmethod
-    def post_image_to_channel(
+    async def post_image_to_channel(
         telegram_bot: TelegramBot,
         channel_id: str,
         image: BytesIO,
@@ -50,8 +47,6 @@ class TelegramService:
             parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
         """
 
-        return asyncio.run(
-            telegram_bot.bot.send_photo(
-                chat_id=channel_id, photo=image, caption=caption, parse_mode=parse_mode
-            )
+        return telegram_bot.bot.send_photo(
+            chat_id=channel_id, photo=image, caption=caption, parse_mode=parse_mode
         )
