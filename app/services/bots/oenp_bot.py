@@ -5,7 +5,7 @@ from infrastructure.utils import (
     convert_latex_to_image,
     get_pyramid_latex_representation,
 )
-from telegram import Bot
+from telegram import Bot, Message
 from telegram.constants import ParseMode
 from io import BytesIO
 from PIL import Image
@@ -32,24 +32,32 @@ class OENPBot(TelegramBot):
         self.oenp_service = OENPService(api_url)
         self.channel_id = channel_id
 
-    def post_message_to_channel(self, text: str) -> None:
+    def post_message_to_channel(
+        self, text: str, reply_to_message_id: int = None
+    ) -> Message:
         """Post message to telegram channel
 
         Args:
             text (str): text message to post
+            reply_to_message_id <Optional> (int): message id to reply
         """
 
-        TelegramService.post_message_to_channel(self, self.channel_id, text)
+        return TelegramService.post_message_to_channel(
+            self, self.channel_id, text, reply_to_message_id=reply_to_message_id
+        )
 
     def post_image_to_channel(
-        self, image_bytes: BytesIO, caption: str, parse_mode: ParseMode = ParseMode.HTML
-    ) -> None:
+        self,
+        image_bytes: BytesIO,
+        caption: str = None,
+        parse_mode: ParseMode = ParseMode.HTML,
+    ) -> Message:
         """
         Post image to telegram channel
 
         Args:
             image_bytes (BytesIO): image represented by BytesIO object
-            caption (str): text message to post
+            caption <Optional> (str): text message to post
             parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
         """
         image = Image.open(image_bytes)
@@ -59,11 +67,11 @@ class OENPBot(TelegramBot):
 
         byte_arr.seek(0)
 
-        TelegramService.post_image_to_channel(
-            self, self.channel_id, byte_arr, caption, parse_mode=parse_mode
+        return TelegramService.post_image_to_channel(
+            self, self.channel_id, byte_arr, caption=caption, parse_mode=parse_mode
         )
 
-    def post_pyramid_to_channel(self, sequence_number: int) -> None:
+    def post_pyramid_to_channel(self, sequence_number: int) -> list[Message]:
         """
         Post pyramid object to telegram channel
 
@@ -92,4 +100,9 @@ class OENPBot(TelegramBot):
             f"<code>\n{escape(latex_representation)}</code>"
         )
 
-        self.post_image_to_channel(image_bytes=latex_expression_image, caption=caption)
+        image_message = self.post_image_to_channel(image_bytes=latex_expression_image)
+        text_message = self.post_message_to_channel(
+            caption, reply_to_message_id=image_message.message_id
+        )
+
+        return [image_message, text_message]
