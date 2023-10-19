@@ -9,6 +9,7 @@ from telegram import Bot
 from telegram.constants import ParseMode
 from io import BytesIO
 from PIL import Image
+from html import escape
 
 
 class OENPBot(TelegramBot):
@@ -88,7 +89,7 @@ class OENPBot(TelegramBot):
             "\nPyramid's data table:"
             f"<code>\n{pyramid['data']}</code>"
             "\nPyramid's latex representation:"
-            f"<code>\n{latex_representation}</code>"
+            f"<code>\n{escape(latex_representation)}</code>"
         )
 
         self.post_image_to_channel(image_bytes=latex_expression_image, caption=caption)
