@@ -15,6 +15,7 @@ class TelegramService:
         channel_id: str,
         text: str,
         reply_to_message_id: int = None,
+        parse_mode: ParseMode = ParseMode.HTML,
     ) -> Message:
         """Post message to the telegram channel
 
@@ -23,10 +24,14 @@ class TelegramService:
             channel_id (str): telegram channel id
             text (str): text message to post
             reply_to_message_id <Optional> (int): message id to reply
+            parse_mode <Optional> (ParseMode): text's parse_mode, by default ParseMode.HTML
         """
 
         return await telegram_bot.bot.send_message(
-            chat_id=channel_id, text=text, reply_to_message_id=reply_to_message_id
+            chat_id=channel_id,
+            text=text,
+            reply_to_message_id=reply_to_message_id,
+            parse_mode=parse_mode,
         )
 
     @staticmethod
