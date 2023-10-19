@@ -25,7 +25,7 @@ class TelegramService:
             reply_to_message_id <Optional> (int): message id to reply
         """
 
-        return telegram_bot.bot.send_message(
+        return await telegram_bot.bot.send_message(
             chat_id=channel_id, text=text, reply_to_message_id=reply_to_message_id
         )
 
@@ -47,6 +47,6 @@ class TelegramService:
             parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
         """
 
-        return telegram_bot.bot.send_photo(
+        return await telegram_bot.bot.send_photo(
             chat_id=channel_id, photo=image, caption=caption, parse_mode=parse_mode
         )
