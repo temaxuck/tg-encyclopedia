@@ -1,5 +1,6 @@
 from sympy import preview
 from io import BytesIO
+import re
 
 
 def convert_latex_to_image(latex_expression: str) -> BytesIO:
@@ -13,6 +14,10 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
     """
 
     image = BytesIO()
+
+    latex_expression = re.sub(
+        r"(\S)\s*<\s*(\S)", r"\1 \\textless{} \2", latex_expression
+    )
 
     preview(
         f"${latex_expression}$",
