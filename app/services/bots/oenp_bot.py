@@ -32,21 +32,29 @@ class OENPBot(TelegramBot):
         self.oenp_service = OENPService(api_url)
         self.channel_id = channel_id
 
-    def post_message_to_channel(
-        self, text: str, reply_to_message_id: int = None
+    async def post_message_to_channel(
+        self,
+        text: str,
+        reply_to_message_id: int = None,
+        parse_mode: ParseMode = ParseMode.HTML,
     ) -> Message:
         """Post message to telegram channel
 
         Args:
             text (str): text message to post
             reply_to_message_id <Optional> (int): message id to reply
+            parse_mode <Optional> (ParseMode): text's parse_mode, by default ParseMode.HTML
         """
 
-        return TelegramService.post_message_to_channel(
-            self, self.channel_id, text, reply_to_message_id=reply_to_message_id
+        return await TelegramService.post_message_to_channel(
+            self,
+            self.channel_id,
+            text,
+            reply_to_message_id=reply_to_message_id,
+            parse_mode=parse_mode,
         )
 
-    def post_image_to_channel(
+    async def post_image_to_channel(
         self,
         image_bytes: BytesIO,
         caption: str = None,
@@ -67,11 +75,11 @@ class OENPBot(TelegramBot):
 
         byte_arr.seek(0)
 
-        return TelegramService.post_image_to_channel(
+        return await TelegramService.post_image_to_channel(
             self, self.channel_id, byte_arr, caption=caption, parse_mode=parse_mode
         )
 
-    def post_pyramid_to_channel(self, sequence_number: int) -> list[Message]:
+    async def post_pyramid_to_channel(self, sequence_number: int) -> list[Message]:
         """
         Post pyramid object to telegram channel
 
@@ -92,7 +100,7 @@ class OENPBot(TelegramBot):
 
         latex_representation = "$$" + gf_latex + r" \\ " + ef_latex + "$$"
 
-        caption = (
+        pyramid_description = (
             f"<b>Pyramid #{pyramid['sequence_number']}</b>"
             "\nPyramid's data table:"
             f"<code>\n{pyramid['data']}</code>"
@@ -100,9 +108,11 @@ class OENPBot(TelegramBot):
             f"<code>\n{escape(latex_representation)}</code>"
         )
 
-        image_message = self.post_image_to_channel(image_bytes=latex_expression_image)
-        text_message = self.post_message_to_channel(
-            caption, reply_to_message_id=image_message.message_id
+        image_message = await self.post_image_to_channel(
+            image_bytes=latex_expression_image
+        )
+        text_message = await self.post_message_to_channel(
+            pyramid_description, reply_to_message_id=image_message.message_id
         )
 
         return [image_message, text_message]
