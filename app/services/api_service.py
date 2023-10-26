@@ -43,10 +43,11 @@ class OEISService:
             data (list[int]): pyramid's data according to Online Encyclopedia of Number Pyramids https://oenp.tusur.ru/
 
         Returns:
-            tuple(dict, str): pair of values json-response and url
+            tuple(dict, str): pair of values json-response and url (not api) to the sequence
         """
 
-        url = f"{self.api_url}/search?fmt=json&q={quote_plus(str(data))}"
-        response = requests.get(url).json()
+        api_url = f"{self.api_url}/search?fmt=json&q={quote_plus(str(data))}"
+        response = requests.get(api_url).json()
+        url = f"{self.api_url}/search?q={quote_plus(str(data))}"
 
         return (response, url)

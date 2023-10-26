@@ -151,7 +151,7 @@ class OENPBot(TelegramBot):
         oeis_reference_str = (
             f"\nOEIS reference: {oeis_url}"
             if oeis_response["results"] is not None
-            else ""
+            else "\nNo OEIS reference"
         )
         caption = f"Pyramid #{pyramid['sequence_number']}." + oeis_reference_str
 
