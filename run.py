@@ -10,10 +10,11 @@ def run_bot():
     bot = OENPBot(
         bot_token=Config.TELEGRAM_BOT_TOKEN,
         channel_id=Config.TELEGRAM_CHANNEL_ID,
-        api_url=Config.OENP_API_URL,
+        oenp_api_url=Config.OENP_API_URL,
+        oeis_api_url="https://oeis.org/",
     )
 
-    asyncio.run(bot.post_pyramids_to_channel(range(20, 60), latency=1))
+    asyncio.run(bot.post_pyramids_to_channel(range(1, 40), latency=60))
 
 
 run_bot()

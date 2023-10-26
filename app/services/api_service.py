@@ -1,5 +1,6 @@
+from typing import Any
 import requests
-import json
+from urllib.parse import quote_plus
 
 
 class OENPService:
@@ -23,3 +24,29 @@ class OENPService:
         response = requests.get(f"{self.api_url}/pyramid/{sequence_number}").json()
 
         return response
+
+
+class OEISService:
+    def __init__(self, api_url: str) -> None:
+        """
+        Initialize OEISService
+
+        Args:
+            api_url (str): url to the On-Line Encyclopedia of Integer Sequences api endpoint
+        """
+        self.api_url = api_url
+
+    def get_sequence_by_data(self, data: list[Any]) -> tuple[dict, str]:
+        """Get Pyramid (dict object) by pyramid sequence number
+
+        Args:
+            data (list[int]): pyramid's data according to Online Encyclopedia of Number Pyramids https://oenp.tusur.ru/
+
+        Returns:
+            tuple(dict, str): pair of values json-response and url
+        """
+
+        url = f"{self.api_url}/search?fmt=json&q={quote_plus(str(data))}"
+        response = requests.get(url).json()
+
+        return (response, url)

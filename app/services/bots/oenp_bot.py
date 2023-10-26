@@ -1,6 +1,6 @@
 from app.services.telegram_service import TelegramService
 from app.services.bots.telegram_bot import TelegramBot
-from app.services.api_service import OENPService
+from app.services.api_service import OENPService, OEISService
 from infrastructure.utils import (
     convert_latex_to_image,
     get_formatted_gf_latex,
@@ -21,16 +21,20 @@ class OENPBot(TelegramBot):
     Online Encyclopedia of Number Pyramids telegram channel
     """
 
-    def __init__(self, bot_token: str, channel_id: str, api_url: str) -> None:
+    def __init__(
+        self, bot_token: str, channel_id: str, oenp_api_url: str, oeis_api_url: str
+    ) -> None:
         """Initialize bot
 
         Args:
             bot_token (str): API token recieved from @BotFather
             channel_id (str): Telegram channel id to which this bot is going to post messages
-            api_url (str): URL to Online Encyclopedia of Number Pyramids API
+            oenp_api_url (str): URL to Online Encyclopedia of Number Pyramids API
+            oeis_api_url (str): URL to On-Line Encyclopedia of Integer Sequences API
         """
         self.bot = Bot(token=bot_token)  # Initializing telegram bot
-        self.oenp_service = OENPService(api_url)
+        self.oenp_service = OENPService(oenp_api_url)
+        self.oeis_service = OEISService(oeis_api_url)
         self.channel_id = channel_id
 
     @log_telegram_error
@@ -126,7 +130,7 @@ class OENPBot(TelegramBot):
         )
 
     @log_telegram_error
-    async def post_pyramid_to_channel(self, sequence_number: int) -> tuple[Message]:
+    async def post_pyramid_to_channel(self, sequence_number: int) -> Message:
         """
         Post pyramid object to telegram channel
 
@@ -134,23 +138,30 @@ class OENPBot(TelegramBot):
             sequence_number (int): Pyramid's sequence number by encyclopedia https://oenp.tusur.ru/
 
         Returns:
-            messages (tuple[Message]): tuple of telegram objects Message which represent posted messages to telegram chat
+            Message:  telegram objects Message which represent posted message to telegram chat
 
         """
         pyramid = self.oenp_service.get_pyramid_by_sequence_number(
             sequence_number=sequence_number
         )
-
-        gf_latex = pyramid["gf_latex"].replace("$", "")
-
-        image = convert_latex_to_image(get_formatted_gf_latex(gf_latex))
-
-        gf_message = await self.post_image_to_channel(
-            image_bytes=image,
-            caption=f"Pyramid #{pyramid['sequence_number']}",
+        oeis_response, oeis_url = self.oeis_service.get_sequence_by_data(
+            pyramid["data"]
         )
 
-        return gf_message
+        oeis_reference_str = (
+            f"\nOEIS reference: {oeis_url}"
+            if oeis_response["results"] is not None
+            else ""
+        )
+        caption = f"Pyramid #{pyramid['sequence_number']}." + oeis_reference_str
+
+        gf_latex = pyramid["gf_latex"].replace("$", "")
+        image = convert_latex_to_image(get_formatted_gf_latex(gf_latex))
+
+        return await self.post_image_to_channel(
+            image_bytes=image,
+            caption=caption,
+        )
 
     async def post_pyramids_to_channel(
         self, snid_range: range, latency: float = 60
