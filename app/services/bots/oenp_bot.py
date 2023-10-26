@@ -3,13 +3,14 @@ from app.services.bots.telegram_bot import TelegramBot
 from app.services.api_service import OENPService
 from infrastructure.utils import (
     convert_latex_to_image,
-    get_pyramid_latex_representation,
+    get_formatted_gf_latex,
 )
-from telegram import Bot, Message
+from telegram import Bot, Message, InputMediaPhoto
 from telegram.constants import ParseMode
 from io import BytesIO
-from PIL import Image
 from html import escape
+import time
+from infrastructure.logging import log_telegram_error
 
 
 class OENPBot(TelegramBot):
@@ -32,87 +33,145 @@ class OENPBot(TelegramBot):
         self.oenp_service = OENPService(api_url)
         self.channel_id = channel_id
 
+    @log_telegram_error
     async def post_message_to_channel(
         self,
         text: str,
-        reply_to_message_id: int = None,
         parse_mode: ParseMode = ParseMode.HTML,
+        *args,
+        **kwargs,
     ) -> Message:
         """Post message to telegram channel
 
         Args:
             text (str): text message to post
-            reply_to_message_id <Optional> (int): message id to reply
             parse_mode <Optional> (ParseMode): text's parse_mode, by default ParseMode.HTML
+
+        Returns:
+            message (Message): telegram object Message which represents posted message to telegram chat
         """
 
         return await TelegramService.post_message_to_channel(
             self,
             self.channel_id,
             text,
-            reply_to_message_id=reply_to_message_id,
             parse_mode=parse_mode,
+            *args,
+            **kwargs,
         )
 
+    @log_telegram_error
     async def post_image_to_channel(
         self,
         image_bytes: BytesIO,
-        caption: str = None,
         parse_mode: ParseMode = ParseMode.HTML,
+        *args,
+        **kwargs,
     ) -> Message:
         """
         Post image to telegram channel
 
         Args:
             image_bytes (BytesIO): image represented by BytesIO object
-            caption <Optional> (str): text message to post
             parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
+
+        Returns:
+            message (Message): telegram object Message which represents posted message to telegram chat
         """
-        image = Image.open(image_bytes)
-
-        byte_arr = BytesIO()
-        image.save(byte_arr, format="PNG")
-
-        byte_arr.seek(0)
 
         return await TelegramService.post_image_to_channel(
-            self, self.channel_id, byte_arr, caption=caption, parse_mode=parse_mode
+            self,
+            self.channel_id,
+            image_bytes,
+            parse_mode=parse_mode,
+            *args,
+            **kwargs,
         )
 
-    async def post_pyramid_to_channel(self, sequence_number: int) -> list[Message]:
+    @log_telegram_error
+    async def post_images_to_channel(
+        self,
+        images: list[BytesIO],
+        caption: str = None,
+        parse_mode: ParseMode = ParseMode.HTML,
+        *args,
+        **kwargs,
+    ) -> tuple[Message]:
+        """
+        Post image to telegram channel
+
+        Args:
+            images (list[BytesIO]): list of images represented by BytesIO objects
+            caption <Optional> (str): caption describing images
+            parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
+
+        Returns:
+            messages (tuple[Message]): tuple of telegram objects Message which represent posted messages to telegram chat
+        """
+        media_group = [
+            InputMediaPhoto(
+                image,
+                caption=caption if index == 0 else "",
+                parse_mode=parse_mode,
+            )
+            for index, image in enumerate(images)
+        ]
+
+        return await TelegramService.post_images_to_channel(
+            self,
+            self.channel_id,
+            media_group,
+            *args,
+            **kwargs,
+        )
+
+    @log_telegram_error
+    async def post_pyramid_to_channel(self, sequence_number: int) -> tuple[Message]:
         """
         Post pyramid object to telegram channel
 
         Args:
             sequence_number (int): Pyramid's sequence number by encyclopedia https://oenp.tusur.ru/
+
+        Returns:
+            messages (tuple[Message]): tuple of telegram objects Message which represent posted messages to telegram chat
+
         """
         pyramid = self.oenp_service.get_pyramid_by_sequence_number(
             sequence_number=sequence_number
         )
 
         gf_latex = pyramid["gf_latex"].replace("$", "")
-        ef_latex = pyramid["ef_latex"].replace("$", "")
 
-        latex_expression = get_pyramid_latex_representation(
-            pyramid["sequence_number"], gf_latex, ef_latex
-        )
-        latex_expression_image = convert_latex_to_image(latex_expression)
+        image = convert_latex_to_image(get_formatted_gf_latex(gf_latex))
 
-        latex_representation = "$$" + gf_latex + r" \\ " + ef_latex + "$$"
-
-        pyramid_description = (
-            f"<b>Pyramid #{pyramid['sequence_number']}</b>"
-            "\nPyramid's data table:"
-            f"<code>\n{pyramid['data']}</code>"
-            "\nPyramid's latex representation:"
-            f"<code>\n{escape(latex_representation)}</code>"
+        gf_message = await self.post_image_to_channel(
+            image_bytes=image,
+            caption=f"Pyramid #{pyramid['sequence_number']}",
         )
 
-        image_message = await self.post_image_to_channel(
-            image_bytes=latex_expression_image
-        )
-        text_message = await self.post_message_to_channel(
-            pyramid_description, reply_to_message_id=image_message.message_id
-        )
+        return gf_message
 
-        return [image_message, text_message]
+    async def post_pyramids_to_channel(
+        self, snid_range: range, latency: float = 60
+    ) -> list[tuple[Message]]:
+        """
+        Post pyramid objects to telegram channel in provided range
+
+        Args:
+            snid_range (range): range of Pyramid's sequence numbers by encyclopedia https://oenp.tusur.ru/
+            latency (float): latency (in seconds) between posting each pyramid, by default 60 second
+
+        Returns:
+            tuple[tuple[Message]]: list of tuples of telegram objects Message which represent posted messages
+
+                *As we post one pyramid object in 3 messages (posting Generating function, Explicit formula, Data),
+                 which are being put in one tuple, when we post multiple pyramids, we put these tuples in list
+        """
+        messages = []
+
+        for i in snid_range:
+            messages.append(await self.post_pyramid_to_channel(i))
+            time.sleep(latency)
+
+        return messages
