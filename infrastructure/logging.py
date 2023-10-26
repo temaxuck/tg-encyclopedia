@@ -19,10 +19,10 @@ def set_logging(filename="logs/tg.log"):
 
 def log_telegram_error(f):
     """
-    Log telegram error
+    Decorator for async functions that logs occuring telegram.error Exception
 
     Args:
-        f: function that make telegram actions
+        f: async function that make telegram actions
     """
 
     async def wrapper(*args, **kwargs):
@@ -31,7 +31,7 @@ def log_telegram_error(f):
         except TelegramError as e:
             message = (
                 f"Telegram error occured in function: {f.__name__} "
-                f"when calling it with arguments: {args} {kwargs}.\n"
+                f"when calling it with arguments: {args} {kwargs}. "
                 f"Exception: {e}."
             )
             print(message)
