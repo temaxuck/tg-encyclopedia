@@ -19,6 +19,10 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
         r"(\S)\s*<\s*(\S)", r"\1 \\textless{} \2", latex_expression
     )
 
+    latex_expression = re.sub(
+        r"(\S)\s*>\s*(\S)", r"\1 \\textgreater{} \2", latex_expression
+    )
+
     preview(
         f"${latex_expression}$",
         output="png",
@@ -34,6 +38,8 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
             "-D 600",
         ],
     )
+
+    image.seek(0)
 
     return image
 
@@ -58,3 +64,25 @@ def get_pyramid_latex_representation(
         r"\text{Generating function} \\" + f"{gf_latex}" + r" \\ \\"
         r"\text{Explicit formula} \\" + f"{ef_latex}"
     )
+
+
+def get_formatted_gf_latex(gf_latex: str):
+    """
+    Get formatted latex representation of generating function of pyramid
+
+    Args:
+        gf_latex (str): generating function's latex representation
+    """
+
+    return r"\text{Generating function} \\" + f"{gf_latex}" + r" \\ \\"
+
+
+def get_formatted_ef_latex(ef_latex: str):
+    """
+    Get formatted latex representation of explicit formula of pyramid
+
+    Args:
+        ef_latex (str): explicit formula's latex representation
+    """
+
+    return r"\text{Explicit formula} \\" + f"{ef_latex}"
