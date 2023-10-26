@@ -14,7 +14,7 @@ def run_bot():
         oeis_api_url="https://oeis.org/",
     )
 
-    asyncio.run(bot.post_pyramids_to_channel(range(1, 40), latency=60))
+    asyncio.run(bot.post_pyramids_to_channel(range(1, 2000), latency=60))
 
 
 run_bot()
