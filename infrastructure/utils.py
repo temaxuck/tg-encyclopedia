@@ -1,19 +1,59 @@
 from sympy import preview
 from io import BytesIO
+import cv2
 import re
+import numpy as np
 
 
-def convert_latex_to_image(latex_expression: str) -> BytesIO:
+def convert_latex_to_image(
+    latex_expression: str, font_size: float = 40, padding: int = 10
+) -> BytesIO:
     """Convert latex expression to png image
 
     Args:
         latex_expression (str): LaTeX expression. Note, this function automatically encloses $ around
+        font_size (float): size of font in pixels. Note, that the less font_size, the less image resolution
+        padding (int): size of padding in pixels.
 
     Returns:
-        BytesIO: bytes that represent image
+        BytesIO: bytes representation of image
     """
 
-    image = BytesIO()
+    def produce_tex_image(latex_expression):
+        tex_image = BytesIO()
+
+        preview(
+            f"${latex_expression}$",
+            output="png",
+            viewer="BytesIO",
+            outputbuffer=tex_image,
+            euler=False,
+            dvioptions=[
+                "-T tight",
+                "-z",
+                "0",
+                "--truecolor",
+                f"-D {font_size * 72.27 / 10}",
+            ],
+        )
+
+        tex_image.seek(0)
+
+        return tex_image
+
+    def produce_image_with_padding(image_bytes):
+        image_bytes = image_bytes.getvalue()
+
+        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+        top, bottom, left, right = [padding] * 4
+        color = [255, 255, 255]
+
+        image_with_padding = cv2.copyMakeBorder(
+            image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+        )
+        _, buffer = cv2.imencode(".png", image_with_padding)
+
+        return BytesIO(buffer.tobytes())
 
     latex_expression = re.sub(
         r"(\S)\s*<\s*(\S)", r"\1 \\textless{} \2", latex_expression
@@ -23,23 +63,8 @@ def convert_latex_to_image(latex_expression: str) -> BytesIO:
         r"(\S)\s*>\s*(\S)", r"\1 \\textgreater{} \2", latex_expression
     )
 
-    preview(
-        f"${latex_expression}$",
-        output="png",
-        viewer="BytesIO",
-        outputbuffer=image,
-        euler=False,
-        dvioptions=[
-            "-T",
-            "tight",
-            "-z",
-            "0",
-            "--truecolor",
-            "-D 600",
-        ],
-    )
-
-    image.seek(0)
+    tex_image = produce_tex_image(latex_expression)
+    image = produce_image_with_padding(tex_image)
 
     return image
 
