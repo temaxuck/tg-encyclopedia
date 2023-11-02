@@ -36,6 +36,15 @@ def log_telegram_error(f):
             )
             print(message)
             logging.error(message)
+
             raise e
+        except Exception as e:
+            message = (
+                f"Unknown error occured in function: {f.__name__} "
+                f"when calling it with arguments: {args} {kwargs}. "
+                f"Exception: {e}."
+            )
+            print(message)
+            logging.error(message)
 
     return wrapper
