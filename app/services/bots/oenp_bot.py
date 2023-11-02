@@ -21,8 +21,18 @@ class OENPBot(TelegramBot):
     Online Encyclopedia of Number Pyramids telegram channel
     """
 
+    telegram_post_format = {
+        "font_size": 20,
+        "padding": 40,
+    }
+
     def __init__(
-        self, bot_token: str, channel_id: str, oenp_api_url: str, oeis_api_url: str
+        self,
+        bot_token: str,
+        channel_id: str,
+        oenp_api_url: str,
+        oeis_api_url: str,
+        telegram_post_format: dict = None,
     ) -> None:
         """Initialize bot
 
@@ -31,11 +41,17 @@ class OENPBot(TelegramBot):
             channel_id (str): Telegram channel id to which this bot is going to post messages
             oenp_api_url (str): URL to Online Encyclopedia of Number Pyramids API
             oeis_api_url (str): URL to On-Line Encyclopedia of Integer Sequences API
+            telegram_post_format (dict): Dictionary object that should contain "font_size" and "padding" keys,
+                where "font_size" key is the size (in px) of font of latex symbols in image
+                and "padding" key is the size (in px) of padding of latex expression within image
         """
         self.bot = Bot(token=bot_token)  # Initializing telegram bot
         self.oenp_service = OENPService(oenp_api_url)
         self.oeis_service = OEISService(oeis_api_url)
         self.channel_id = channel_id
+
+        if telegram_post_format is not None:
+            self.telegram_post_format = telegram_post_format
 
     @log_telegram_error
     async def post_message_to_channel(
@@ -156,7 +172,11 @@ class OENPBot(TelegramBot):
         caption = f"Pyramid #{pyramid['sequence_number']}." + oeis_reference_str
 
         gf_latex = pyramid["gf_latex"].replace("$", "")
-        image = convert_latex_to_image(get_formatted_gf_latex(gf_latex))
+        image = convert_latex_to_image(
+            get_formatted_gf_latex(gf_latex),
+            font_size=self.telegram_post_format["font_size"],
+            padding=self.telegram_post_format["padding"],
+        )
 
         return await self.post_image_to_channel(
             image_bytes=image,
@@ -183,6 +203,7 @@ class OENPBot(TelegramBot):
 
         for i in snid_range:
             messages.append(await self.post_pyramid_to_channel(i))
+            print(f"Done: {i-snid_range.start+1}/{snid_range.stop-snid_range.start}")
             time.sleep(latency)
 
         return messages
