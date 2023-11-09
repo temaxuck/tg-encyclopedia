@@ -16,11 +16,9 @@ def run_bot():
     )
 
     async def load_batches():
-        await bot.post_pyramids_to_channel(range(1, 10), latency=60)
-        await bot.post_pyramid_to_channel(484)
-        await bot.post_pyramid_to_channel(range(600, 620), latency=60)
-        await bot.post_pyramid_to_channel(range(1000, 1020), latency=60)
-        await bot.post_pyramid_to_channel(range(1450, 1500), latency=60)
+        await bot.post_pyramids_to_channel(range(600, 620), latency=60)
+        await bot.post_pyramids_to_channel(range(1000, 1020), latency=60)
+        await bot.post_pyramids_to_channel(range(1450, 1500), latency=60)
 
     asyncio.run(load_batches())
 
