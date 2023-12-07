@@ -19,10 +19,10 @@ def set_logging(filename="logs/tg.log"):
 
 def log_telegram_error(f):
     """
-    Decorator for async functions that logs occuring telegram.error Exception
+    Decorator for async functions which logs occuring telegram.error Exception
 
     Args:
-        f: async function that make telegram actions
+        f: async function which make telegram actions
     """
 
     async def wrapper(*args, **kwargs):
