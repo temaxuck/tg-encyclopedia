@@ -1,10 +1,12 @@
+# To be moved to CLI
+
 from app.services.bots.oenp_bot import OENPBot
 from infrastructure.config import Config
 from infrastructure.logging import set_logging
 import asyncio
 
 
-def run_bot():
+def load_pyarmids_to_channel(start=None, end=None, latency=60):
     set_logging()
 
     bot = OENPBot(
@@ -16,11 +18,15 @@ def run_bot():
     )
 
     async def load_batches():
-        await bot.post_pyramids_to_channel(range(600, 620), latency=60)
-        await bot.post_pyramids_to_channel(range(1000, 1020), latency=60)
-        await bot.post_pyramids_to_channel(range(1450, 1500), latency=60)
+        await bot.post_pyramids_to_channel(range(600, 620), latency=latency)
+        await bot.post_pyramids_to_channel(range(1000, 1020), latency=latency)
+        await bot.post_pyramids_to_channel(range(1450, 1500), latency=latency)
 
-    asyncio.run(load_batches())
+    if not (start and end):
+        asyncio.run(load_batches())
+    else:
+        asyncio.run(bot.post_pyramids_to_channel(range(start, end), latency=latency))
 
 
-run_bot()
+if __name__ == "__main__":
+    load_pyarmids_to_channel()
