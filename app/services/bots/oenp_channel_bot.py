@@ -13,7 +13,7 @@ import time
 from infrastructure.logging import log_telegram_error
 
 
-class OENPBot(TelegramBot):
+class OENPChannelBot(TelegramBot):
     """
     Online Encyclopedia of Number Pyramids Telegram Bot
 

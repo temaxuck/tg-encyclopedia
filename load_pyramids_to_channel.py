@@ -1,6 +1,6 @@
 # To be moved to CLI
 
-from app.services.bots.oenp_bot import OENPBot
+from app.services.bots.oenp_bot import OENPChannelBot
 from infrastructure.config import Config
 from infrastructure.logging import set_logging
 import asyncio
@@ -9,7 +9,7 @@ import asyncio
 def load_pyarmids_to_channel(start=None, end=None, latency=60):
     set_logging()
 
-    bot = OENPBot(
+    bot = OENPChannelBot(
         bot_token=Config.TELEGRAM_BOT_TOKEN,
         channel_id=Config.TELEGRAM_CHANNEL_ID,
         oenp_api_url=Config.OENP_API_URL,
