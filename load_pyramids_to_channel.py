@@ -1,6 +1,6 @@
 # To be moved to CLI
 
-from app.services.bots.oenp_bot import OENPChannelBot
+from app.services.bots.oenp_channel_bot import OENPChannelBot
 from infrastructure.config import Config
 from infrastructure.logging import set_logging
 import asyncio
