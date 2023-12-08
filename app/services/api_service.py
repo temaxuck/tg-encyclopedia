@@ -1,9 +1,32 @@
 from typing import Any
 import requests
 from urllib.parse import quote_plus
+import abc
 
 
-class OENPService:
+class APIService(abc.ABC):
+    """
+    Abstract class for api services.
+
+    Api services should be initialized with api_url parameter
+    """
+
+    api_url = None
+
+    @abc.abstractmethod
+    def __init__(self, api_url: str) -> None:
+        """
+        Initialize api service.
+
+        Must have api_url attribute
+
+        Args:
+            api_url (str): url for API services
+        """
+        raise NotImplemented
+
+
+class OENPService(APIService):
     def __init__(self, api_url: str) -> None:
         """Initialize OENPService
 
@@ -26,7 +49,7 @@ class OENPService:
         return response
 
 
-class OEISService:
+class OEISService(APIService):
     def __init__(self, api_url: str) -> None:
         """
         Initialize OEISService
