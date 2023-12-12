@@ -48,6 +48,27 @@ class OENPService(APIService):
 
         return response
 
+    def search_pyramid_by_generating_function(self, query: str) -> dict:
+        response = requests.get(
+            f"{self.api_url}/search?search_type=0&search_query={quote_plus(query)}"
+        ).json()
+
+        return response
+
+    def search_pyramid_by_explicit_formula(self, query: str) -> dict:
+        response = requests.get(
+            f"{self.api_url}/search?search_type=0&search_query={quote_plus(query)}"
+        ).json()
+
+        return response
+
+    def search_pyramid_by_data(self, query: str) -> dict:
+        response = requests.get(
+            f"{self.api_url}/search?search_type=1&search_query={quote_plus(query)}"
+        ).json()
+
+        return response
+
 
 class OEISService(APIService):
     def __init__(self, api_url: str) -> None:
