@@ -15,6 +15,7 @@ class Config:
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
     OENP_API_URL = os.getenv("OENP_API_URL")
+    OEIS_API_URL = "https://oeis.org/"
     TELEGRAM_POST_FORMAT = {
         "font_size": 20,
         "padding": 40,
