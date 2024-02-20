@@ -1,13 +1,17 @@
 # To be moved to CLI
 import asyncio
 
+from .oenp_channel_bot import OENPChannelBot
 from infrastructure.config import Config
 from infrastructure.logging import set_logging
-from tg_encyclopedia.bots.oenp_channel_bot import OENPChannelBot
+from infrastructure.argparse import get_arg_parser
 
 
-def load_pyarmids_to_channel(start: int = None, end: int = None, latency: int = 60):
-    set_logging()
+def load_pyarmids_to_channel():
+    parser = get_arg_parser()
+    args = parser.parse_args()
+
+    set_logging(args.log_level)
 
     bot = OENPChannelBot(
         bot_token=Config.TELEGRAM_BOT_TOKEN,
@@ -17,15 +21,20 @@ def load_pyarmids_to_channel(start: int = None, end: int = None, latency: int = 
         telegram_post_format=Config.TELEGRAM_POST_FORMAT,
     )
 
-    async def load_batches():
-        await bot.post_pyramids_to_channel(range(600, 620), latency=latency)
-        await bot.post_pyramids_to_channel(range(1000, 1020), latency=latency)
-        await bot.post_pyramids_to_channel(range(1450, 1500), latency=latency)
+    asyncio.run(
+        bot.post_pyramids_to_channel(
+            range(args.start, args.end),
+            latency=args.latency,
+        )
+    )
+    # async def load_batches():
+    #     await bot.post_pyramids_to_channel(range(600, 620), latency=args.latency)
+    #     await bot.post_pyramids_to_channel(range(1000, 1020), latency=args.latency)
+    #     await bot.post_pyramids_to_channel(range(1450, 1500), latency=args.latency)
 
-    if not (start and end):
-        asyncio.run(load_batches())
-    else:
-        asyncio.run(bot.post_pyramids_to_channel(range(start, end), latency=latency))
+    # if not (start and end):
+    #     asyncio.run(load_batches())
+    # else:
 
 
 if __name__ == "__main__":

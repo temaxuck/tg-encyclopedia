@@ -12,14 +12,16 @@ class Config:
         ValueError: Config couldn't find necessary environment variables
     """
 
-    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-    TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
-    OENP_API_URL = os.getenv("OENP_API_URL")
+    ENV_VAR_PREFIX = "TG_ENCYCLOPEDIA_"
+    TELEGRAM_BOT_TOKEN = os.getenv(f"{ENV_VAR_PREFIX}BOT_TOKEN")
+    TELEGRAM_CHANNEL_ID = os.getenv(f"{ENV_VAR_PREFIX}CHANNEL_ID")
+    OENP_API_URL = os.getenv(f"{ENV_VAR_PREFIX}OENP_API_URL")
     OEIS_API_URL = "https://oeis.org/"
     TELEGRAM_POST_FORMAT = {
         "font_size": 20,
         "padding": 40,
     }
+    LOG_LEVEL = "INFO"
 
     @classmethod
     def validate_config(cls):

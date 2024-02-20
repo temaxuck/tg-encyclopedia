@@ -4,7 +4,7 @@ import os
 from telegram.error import TelegramError
 
 
-def set_logging(filename="logs/tg.log"):
+def set_logging(log_level=logging.INFO, filename="logs/tg.log"):
     """set logging
 
     Args:
@@ -15,7 +15,7 @@ def set_logging(filename="logs/tg.log"):
 
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO,
+        level=log_level,
         filename=filename,
         filemode="w",
     )

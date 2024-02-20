@@ -193,7 +193,7 @@ class OENPChannelBot(TelegramBot):
         Post pyramid objects to telegram channel in provided range
 
         Args:
-            snid_range (range): range of Pyramid's sequence numbers by encyclopedia https://oenp.tusur.ru/
+            snid_range (range): range of Pyramid's sequence numbers according to encyclopedia https://oenp.tusur.ru/
             latency (float): latency (in seconds) between posting each pyramid, by default 60 second
 
         Returns:

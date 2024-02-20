@@ -19,6 +19,6 @@ To run bot that would post pyramids data to telegram channel run `python3 load_p
 **TODO**
 --------
 - [x] Refactor code and make python package from this repo;
-- [ ] Create proper CLI tool to run bot and to post pyramid data to channel;
+- [x] Create proper CLI tool to run bot and to post pyramid data to channel;
 - [ ] Dockerize this package;
 - [ ] Add tests and CI;
