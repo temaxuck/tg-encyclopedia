@@ -1,7 +1,8 @@
-from app.services.bots.telegram_bot import TelegramBot
 from io import BytesIO
 from telegram import Message, InputMediaPhoto
+from typing import List, Tuple
 
+from app.services.bots.telegram_bot import TelegramBot
 
 class TelegramService:
     """
@@ -50,20 +51,20 @@ class TelegramService:
     async def post_images_to_channel(
         telegram_bot: TelegramBot,
         channel_id: str,
-        media_group: list[InputMediaPhoto],
+        media_group: List[InputMediaPhoto],
         *args,
         **kwargs
-    ) -> tuple[Message]:
+    ) -> Tuple[Message]:
         """
         Post image to telegram channel
 
         Args:
             telegram_bot (TelegramBot): telegram bot entity
             channel_id (str): telegram channel id to post to
-            images (list[InputMediaPhoto]): list of InputMediaPhoto objects
+            images (List[InputMediaPhoto]): List of InputMediaPhoto objects
 
         Returns:
-            messages (tuple[Message]): tuple of telegram objects Message which represent posted messages to telegram chat
+            messages (Tuple[Message]): Tuple of telegram objects Message which represent posted messages to telegram chat
         """
 
         return await telegram_bot.bot.send_media_group(

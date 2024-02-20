@@ -1,7 +1,8 @@
-from typing import Any
-import requests
-from urllib.parse import quote_plus
 import abc
+import requests
+
+from typing import Any, Tuple, List
+from urllib.parse import quote_plus
 
 
 class APIService(abc.ABC):
@@ -80,14 +81,14 @@ class OEISService(APIService):
         """
         self.api_url = api_url
 
-    def get_sequence_by_data(self, data: list[Any]) -> tuple[dict, str]:
+    def get_sequence_by_data(self, data: List[Any]) -> Tuple[dict, str]:
         """Get Pyramid (dict object) by pyramid sequence number
 
         Args:
-            data (list[int]): pyramid's data according to Online Encyclopedia of Number Pyramids https://oenp.tusur.ru/
+            data (List[int]): pyramid's data according to Online Encyclopedia of Number Pyramids https://oenp.tusur.ru/
 
         Returns:
-            tuple(dict, str): pair of values json-response and url (not api) to the sequence
+            Tuple(dict, str): pair of values json-response and url (not api) to the sequence
         """
 
         api_url = f"{self.api_url}/search?fmt=json&q={quote_plus(str(data))}"

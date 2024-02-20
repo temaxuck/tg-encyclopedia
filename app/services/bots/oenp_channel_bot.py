@@ -1,3 +1,11 @@
+import time
+
+from telegram import Bot, Message, InputMediaPhoto
+from telegram.constants import ParseMode
+from io import BytesIO
+from infrastructure.logging import log_telegram_error
+from typing import List, Tuple
+
 from app.services.telegram_service import TelegramService
 from app.services.bots.telegram_bot import TelegramBot
 from app.services.api_service import OENPService, OEISService
@@ -5,13 +13,6 @@ from infrastructure.utils import (
     convert_latex_to_image,
     get_formatted_gf_latex,
 )
-from telegram import Bot, Message, InputMediaPhoto
-from telegram.constants import ParseMode
-from io import BytesIO
-from html import escape
-import time
-from infrastructure.logging import log_telegram_error
-
 
 class OENPChannelBot(TelegramBot):
     """
@@ -111,22 +112,22 @@ class OENPChannelBot(TelegramBot):
     @log_telegram_error
     async def post_images_to_channel(
         self,
-        images: list[BytesIO],
+        images: List[BytesIO],
         caption: str = None,
         parse_mode: ParseMode = ParseMode.HTML,
         *args,
         **kwargs,
-    ) -> tuple[Message]:
+    ) -> Tuple[Message]:
         """
         Post image to telegram channel
 
         Args:
-            images (list[BytesIO]): list of images represented by BytesIO objects
+            images (List[BytesIO]): List of images represented by BytesIO objects
             caption <Optional> (str): caption describing images
             parse_mode <Optional> (ParseMode): caption's parse_mode, by default ParseMode.HTML
 
         Returns:
-            messages (tuple[Message]): tuple of telegram objects Message which represent posted messages to telegram chat
+            messages (Tuple[Message]): Tuple of telegram objects Message which represent posted messages to telegram chat
         """
         media_group = [
             InputMediaPhoto(
@@ -185,7 +186,7 @@ class OENPChannelBot(TelegramBot):
 
     async def post_pyramids_to_channel(
         self, snid_range: range, latency: float = 60
-    ) -> list[tuple[Message]]:
+    ) -> List[Tuple[Message]]:
         """
         Post pyramid objects to telegram channel in provided range
 
@@ -194,10 +195,10 @@ class OENPChannelBot(TelegramBot):
             latency (float): latency (in seconds) between posting each pyramid, by default 60 second
 
         Returns:
-            tuple[tuple[Message]]: list of tuples of telegram objects Message which represent posted messages
+            Tuple[Tuple[Message]]: List of Tuples of telegram objects Message which represent posted messages
 
                 *As we post one pyramid object in 3 messages (posting Generating function, Explicit formula, Data),
-                 which are being put in one tuple, when we post multiple pyramids, we put these tuples in list
+                 which are being put in one Tuple, when we post multiple pyramids, we put these Tuples in List
         """
         messages = []
 
