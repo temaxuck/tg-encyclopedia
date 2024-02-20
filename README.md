@@ -1,2 +1,2 @@
-# tg-channel-encyclopedia
-A utility to transfer encyclopedia data from database to telegram channel
+# tg-encyclopedia
+A telegram bot for viewing and searching for **[number pyramid objects](https://oenp.tusur.ru/)**
