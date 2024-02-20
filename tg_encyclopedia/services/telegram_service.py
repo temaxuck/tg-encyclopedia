@@ -2,7 +2,8 @@ from io import BytesIO
 from telegram import Message, InputMediaPhoto
 from typing import List, Tuple
 
-from app.services.bots.telegram_bot import TelegramBot
+from tg_encyclopedia.bots.telegram_bot import TelegramBot
+
 
 class TelegramService:
     """

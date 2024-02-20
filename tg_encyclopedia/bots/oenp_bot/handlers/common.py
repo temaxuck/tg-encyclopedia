@@ -1,14 +1,11 @@
-from urllib.parse import quote_plus
-from typing import Any, Callable, Dict
-from aiogram import Router, F, html
-from aiogram.fsm.state import State, StatesGroup
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import (
     Message,
     ReplyKeyboardRemove,
 )
 from aiogram.fsm.context import FSMContext
-from app.services.api_service import OENPService
+
 from ..handlers import COMMANDS
 
 router = Router()

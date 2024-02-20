@@ -1,18 +1,20 @@
 import time
 
+from io import BytesIO
 from telegram import Bot, Message, InputMediaPhoto
 from telegram.constants import ParseMode
-from io import BytesIO
-from infrastructure.logging import log_telegram_error
 from typing import List, Tuple
 
-from app.services.telegram_service import TelegramService
-from app.services.bots.telegram_bot import TelegramBot
-from app.services.api_service import OENPService, OEISService
+
+from infrastructure.logging import log_telegram_error
+from tg_encyclopedia.bots.telegram_bot import TelegramBot
+from tg_encyclopedia.services.telegram_service import TelegramService
+from tg_encyclopedia.services.api_service import OENPService, OEISService
 from infrastructure.utils import (
     convert_latex_to_image,
     get_formatted_gf_latex,
 )
+
 
 class OENPChannelBot(TelegramBot):
     """

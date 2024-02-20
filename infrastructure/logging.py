@@ -1,4 +1,6 @@
 import logging
+import os
+
 from telegram.error import TelegramError
 
 
@@ -8,6 +10,8 @@ def set_logging(filename="logs/tg.log"):
     Args:
         filename: file to output logs, by default logs/tg.log (logging in terminal)
     """
+
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

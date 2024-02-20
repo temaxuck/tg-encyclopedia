@@ -1,9 +1,10 @@
-from app.services.bots.telegram_bot import TelegramBot
-from app.services.api_service import OENPService, OEISService
-from app.services.bots.oenp_bot.handlers import search, pyramids, common, COMMANDS
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.fsm.storage.memory import MemoryStorage
+
+from tg_encyclopedia.bots.telegram_bot import TelegramBot
+from tg_encyclopedia.services.api_service import OENPService, OEISService
+from tg_encyclopedia.bots.oenp_bot.handlers import search, pyramids, common, COMMANDS
 
 
 class OENPBot(TelegramBot):

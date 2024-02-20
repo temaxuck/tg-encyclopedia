@@ -1,12 +1,12 @@
 # To be moved to CLI
-
-from app.services.bots.oenp_channel_bot import OENPChannelBot
-from infrastructure.config import Config
-from infrastructure.logging import set_logging
 import asyncio
 
+from infrastructure.config import Config
+from infrastructure.logging import set_logging
+from tg_encyclopedia.bots.oenp_channel_bot import OENPChannelBot
 
-def load_pyarmids_to_channel(start=None, end=None, latency=60):
+
+def load_pyarmids_to_channel(start: int = None, end: int = None, latency: int = 60):
     set_logging()
 
     bot = OENPChannelBot(

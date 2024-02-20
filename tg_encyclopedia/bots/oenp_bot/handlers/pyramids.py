@@ -1,24 +1,11 @@
-# Awfully written. To be re-wrote
-from urllib.parse import quote_plus
-from typing import Any, Callable, Dict
-from aiogram import Router, F, html
-from aiogram.fsm.state import State, StatesGroup
+# Awfully written. To be re-written
+from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import (
-    Message,
-    ReplyKeyboardRemove,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
-    InputMediaPhoto,
-)
-from aiogram.types.input_file import BufferedInputFile
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+
 from infrastructure.config import Config
-from infrastructure.utils import (
-    get_pyramid_latex_representation,
-    convert_latex_to_image,
-)
-from app.services.api_service import OENPService
+from tg_encyclopedia.services.api_service import OENPService
 
 router = Router()
 

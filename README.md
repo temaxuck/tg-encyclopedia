@@ -5,6 +5,11 @@ The bot is written using aiogram package and is also able to load pyramid data t
 
 To run bot that would post pyramids data to telegram channel run `python3 load_pyramids_to_channel`.
 
+### **EXTRA-REQUIREMENTS**:
+- texlive-latex-extra 
+- dvipng
+
+
 ### **TODO**:
 
 - [ ] Create proper CLI tool to run bot and to post pyramid data to channel;
