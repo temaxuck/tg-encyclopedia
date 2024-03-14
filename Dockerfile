@@ -16,7 +16,7 @@ RUN /usr/share/python3/app/bin/pip install -Ur /mnt/requirements.txt
 # Install texlive-latex-extra 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install texlive-latex-extra -y 
+    && apt-get install texlive-latex-extra dvipng -y 
 
 RUN /usr/share/python3/app/bin/pip install opencv-python-headless
 
