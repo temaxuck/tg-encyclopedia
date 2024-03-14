@@ -33,8 +33,9 @@ setup(
     url="https://github.com/temaxuck/tg-encyclopedia",
     platforms="all",
     python_requires=">=3.10",
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=["test"]),
     install_requires=load_requirements("requirements.txt"),
+    extras_require={"dev": load_requirements("requirements.dev.txt")},
     entry_points={
         "console_scripts": [
             "oenp-bot = {0}.bots.oenp_bot.__main__:run_bot".format(module_name),
