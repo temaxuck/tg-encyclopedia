@@ -1,9 +1,11 @@
 import abc
 import requests
+import logging
 
 from typing import Any, Tuple, List
 from urllib.parse import quote_plus
 
+from infrastructure.logging import log_telegram_error
 
 class APIService(abc.ABC):
     """
@@ -48,27 +50,33 @@ class OENPService(APIService):
         response = requests.get(f"{self.api_url}/pyramid/{sequence_number}").json()
 
         return response
+    
+    def search(self, search_type: int, query: str) -> dict:
+        response = None
+        request_url = f"{self.api_url}/search?search_type={search_type}&search_query={quote_plus(query)}"
+
+        try:
+            response = requests.get(request_url)
+            return response.json()
+        except Exception as error:
+            message = (
+                "Error occured while trying to use API search feature\n"
+                f"API request was as following: {request_url}\n"
+                f"API response: {response}\n"
+                f"Error: {error}\n"
+            )
+            print(message)
+            logging.error(message)
+            
 
     def search_pyramid_by_generating_function(self, query: str) -> dict:
-        response = requests.get(
-            f"{self.api_url}/search?search_type=0&search_query={quote_plus(query)}"
-        ).json()
-
-        return response
+        return self.search(0, query)
 
     def search_pyramid_by_explicit_formula(self, query: str) -> dict:
-        response = requests.get(
-            f"{self.api_url}/search?search_type=0&search_query={quote_plus(query)}"
-        ).json()
-
-        return response
+        return self.search(0, query)
 
     def search_pyramid_by_data(self, query: str) -> dict:
-        response = requests.get(
-            f"{self.api_url}/search?search_type=1&search_query={quote_plus(query)}"
-        ).json()
-
-        return response
+        return self.search(1, query)
 
 
 class OEISService(APIService):
